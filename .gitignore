@@ -1,0 +1,29 @@
+# OS Lab - installed Dev-C++ toolchain
+4th Semester/OS Lab/Dev-Cpp/
+
+# Python generated files
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter Notebook temporary files
+.ipynb_checkpoints/
+
+# Build / compiled files
+*.o
+*.obj
+*.class
+
+# Environment / secret files
+.env
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Compiled executables
+*.exe

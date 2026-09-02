@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uninformed Search Algorithms - Interactive Step-by-Step Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: #f5f5f5;
+            border: none;
+            border-radius: 8px 8px 0 0;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            color: #555;
+        }
+
+        .tab-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .section h3 {
+            color: #764ba2;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .graph-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            border: 2px solid #e0e0e0;
+        }
+
+        .graph-visual {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #333;
+            white-space: pre;
+            display: inline-block;
+            text-align: left;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.5;
+        }
+
+        .keyword { color: #ff79c6; }
+        .function { color: #50fa7b; }
+        .comment { color: #6272a4; font-style: italic; }
+        .string { color: #f1fa8c; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: #f5f5f5;
+        }
+
+        .step-controls {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .visualization {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #e0e0e0;
+            min-height: 300px;
+        }
+
+        .node {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            line-height: 50px;
+            text-align: center;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s;
+        }
+
+        .node.current {
+            background: #ff6b6b;
+            transform: scale(1.2);
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .node.visited {
+            background: #51cf66;
+        }
+
+        .node.goal {
+            background: #ffd43b;
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+
+        .complexity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .complexity-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #667eea;
+        }
+
+        .complexity-card h4 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .tree-visual {
+            font-family: 'Courier New', monospace;
+            font-size: 1em;
+            line-height: 1.6;
+            background: #2d2d2d;
+            color: #50fa7b;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 15px 0;
+        }
+
+        .step-indicator {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #667eea;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        footer {
+            background: #2d2d2d;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 Uninformed Search Algorithms</h1>
+            <p>Interactive Step-by-Step Guide to Classical AI Search Strategies</p>
+        </header>
+
+        <div class="content">
+            <!-- Navigation Tabs -->
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="showTab('intro')">Introduction</button>
+                <button class="tab-btn" onclick="showTab('bfs')">BFS</button>
+                <button class="tab-btn" onclick="showTab('dfs')">DFS</button>
+                <button class="tab-btn" onclick="showTab('dls')">DLS</button>
+                <button class="tab-btn" onclick="showTab('ids')">IDS</button>
+                <button class="tab-btn" onclick="showTab('ucs')">UCS</button>
+                <button class="tab-btn" onclick="showTab('comparison')">Comparison</button>
+            </div>
+
+            <!-- Introduction Tab -->
+            <div id="intro" class="tab-content active">
+                <div class="section">
+                    <h2>📚 What are Uninformed Search Algorithms?</h2>
+                    <p><strong>Uninformed search algorithms</strong> (also called <strong>blind search</strong>) are strategies that explore a search space without any domain-specific knowledge about the goal location. They only know:</p>
+                    <ul style="margin: 15px 0 15px 30px;">
+                        <li>How to generate successors of a state</li>
+                        <li>How to recognize the goal state</li>
+                        <li>The cost of actions (for some algorithms)</li>
+                    </ul>
+
+                    <div class="info-box">
+                        <strong>🎯 Key Point:</strong> These algorithms differ in the <strong>order</strong> in which they expand nodes, leading to different performance characteristics.
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🗺️ Our Example Graph</h2>
+                    <p>Throughout this guide, we'll use the same graph to demonstrate each algorithm:</p>
+
+                    <div class="graph-container">
+                        <div class="graph-visual">        <span style="color: #ff6b6b; font-weight: bold;">A (Start)</span>
+      /   \
+     B     C
+    / \     \
+   D   E     F
+        \
+         <span style="color: #ffd43b; font-weight: bold;">G (Goal)</span></div>
+                    </div>
+
+                    <h3>Graph Properties:</h3>
+                    <table>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                        </tr>
+                        <tr>
+                            <td>Start Node</td>
+                            <td><strong>A</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Goal Node</td>
+                            <td><strong>G</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Edge Costs</td>
+                            <td>All edges = 1 (uniform cost)</td>
+                        </tr>
+                        <tr>
+                            <td>Adjacency List</td>
+                            <td>A→[B,C], B→[D,E], C→[F], E→[G]</td>
+                        </tr>
+                    </table>
+
+                    <div class="success-box">
+                        <strong>✅ Optimal Solution:</strong> A → B → E → G (Total cost: 3)
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h2>🔑 Key Concepts</h2>
+
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>Completeness</h4>
+                            <p>Will the algorithm always find a solution if one exists?</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>Optimality</h4>
+                            <p>Will the algorithm find the best (lowest-cost) solution?</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>Time Complexity</h4>
+                            <p>How many nodes will be expanded?</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>Space Complexity</h4>
+                            <p>How much memory is required?</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>Notation:</strong><br>
+                        <strong>b</strong> = branching factor (average number of successors)<br>
+                        <strong>d</strong> = depth of shallowest solution<br>
+                        <strong>m</strong> = maximum depth of search tree
+                    </div>
+                </div>
+            </div>
+
+            <!-- BFS Tab -->
+            <div id="bfs" class="tab-content">
+                <div class="section">
+                    <h2>🌊 Breadth-First Search (BFS)</h2>
+
+                    <h3>Core Concept</h3>
+                    <p>BFS explores the search tree <strong>level by level</strong>, expanding all nodes at depth <em>d</em> before moving to depth <em>d+1</em>. It uses a <strong>FIFO (First-In-First-Out) queue</strong>.</p>
+
+                    <div class="info-box">
+                        <strong>🎯 Strategy:</strong> "Explore broadly before going deep"
+                    </div>
+
+                    <h3>How It Works</h3>
+                    <ol style="margin: 15px 0 15px 30px;">
+                        <li>Start with the initial node in the queue</li>
+                        <li>Remove the front node from the queue</li>
+                        <li>If it's the goal, return the solution</li>
+                        <li>Otherwise, add all its children to the back of the queue</li>
+                        <li>Repeat until goal is found or queue is empty</li>
+                    </ol>
+
+                    <h3>Pseudocode</h3>
+                    <div class="code-block">
+<span class="keyword">function</span> <span class="function">BFS</span>(start, goal):
+    frontier ← <span class="function">Queue</span>()
+    frontier.<span class="function">enqueue</span>(start)
+    explored ← ∅
+    parent[start] ← <span class="keyword">null</span>
+
+    <span class="keyword">while</span> frontier <span class="keyword">is not empty</span>:
+        node ← frontier.<span class="function">dequeue</span>()
+
+        <span class="keyword">if</span> node == goal:
+            <span class="keyword">return</span> <span class="function">reconstruct_path</span>(parent, node)
+
+        explored.<span class="function">add</span>(node)
+
+        <span class="keyword">for each</span> child <span class="keyword">in</span> <span class="function">successors</span>(node):
+            <span class="keyword">if</span> child <span class="keyword">not in</span> explored <span class="keyword">and</span> child <span class="keyword">not in</span> frontier:
+                parent[child] ← node
+                frontier.<span class="function">enqueue</span>(child)
+
+    <span class="keyword">return</span> failure
+                    </div>
+
+                    <h3>Step-by-Step Execution</h3>
+                    <div class="step-indicator" id="bfs-step">Step 0: Initialize with node A</div>
+
+                    <div class="step-controls">
+                        <button class="btn" onclick="bfsStep('prev')" id="bfs-prev">⬅️ Previous</button>
+                        <button class="btn" onclick="bfsStep('next')" id="bfs-next">Next ➡️</button>
+                        <button class="btn" onclick="bfsStep('reset')">🔄 Reset</button>
+                    </div>
+
+                    <table id="bfs-table">
+                        <tr>
+                            <th>Step</th>
+                            <th>Queue (Front → Back)</th>
+                            <th>Node Expanded</th>
+                            <th>Children Added</th>
+                            <th>Explored Set</th>
+                        </tr>
+                        <tr class="bfs-row" data-step="0">
+                            <td>0</td>
+                            <td>[A]</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>{ }</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="1">
+                            <td>1</td>
+                            <td>[B, C]</td>
+                            <td>A</td>
+                            <td>B, C</td>
+                            <td>{A}</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="2">
+                            <td>2</td>
+                            <td>[C, D, E]</td>
+                            <td>B</td>
+                            <td>D, E</td>
+                            <td>{A, B}</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="3">
+                            <td>3</td>
+                            <td>[D, E, F]</td>
+                            <td>C</td>
+                            <td>F</td>
+                            <td>{A, B, C}</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="4">
+                            <td>4</td>
+                            <td>[E, F]</td>
+                            <td>D</td>
+                            <td>-</td>
+                            <td>{A, B, C, D}</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="5">
+                            <td>5</td>
+                            <td>[F, G]</td>
+                            <td>E</td>
+                            <td>G</td>
+                            <td>{A, B, C, D, E}</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="6">
+                            <td>6</td>
+                            <td>[G]</td>
+                            <td>F</td>
+                            <td>-</td>
+                            <td>{A, B, C, D, E, F}</td>
+                        </tr>
+                        <tr class="bfs-row" data-step="7">
+                            <td>7</td>
+                            <td>[ ]</td>
+                            <td>G ✅</td>
+                            <td>-</td>
+                            <td>{A, B, C, D, E, F, G}</td>
+                        </tr>
+                    </table>
+
+                    <div class="success-box">
+                        <strong>✅ Solution Found:</strong> A → B → E → G (Cost: 3)
+                    </div>
+
+                    <h3>Search Tree Construction</h3>
+                    <div class="tree-visual">          [A]
+         /   \
+      [B]     [C]
+     /   \       \
+  [D]     [E]     [F]
+           \
+           [G] ← Goal found at depth 3</div>
+
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>⏱️ Time Complexity</h4>
+                            <p><strong>O(b<sup>d</sup>)</strong></p>
+                            <p>Expands all nodes up to depth d</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>💾 Space Complexity</h4>
+                            <p><strong>O(b<sup>d</sup>)</strong></p>
+                            <p>Must store all nodes at current level</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>✅ Complete</h4>
+                            <p><strong>Yes</strong></p>
+                            <p>If branching factor is finite</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>🎯 Optimal</h4>
+                            <p><strong>Yes</strong></p>
+                            <p>For uniform step costs</p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Main Drawback:</strong> High memory consumption! BFS stores all nodes at the current level, which can be exponentially large.
+                    </div>
+                </div>
+            </div>
+
+            <!-- DFS Tab -->
+            <div id="dfs" class="tab-content">
+                <div class="section">
+                    <h2>🏔️ Depth-First Search (DFS)</h2>
+
+                    <h3>Core Concept</h3>
+                    <p>DFS explores the search tree by going as <strong>deep as possible</strong> along each branch before backtracking. It uses a <strong>LIFO (Last-In-First-Out) stack</strong>.</p>
+
+                    <div class="info-box">
+                        <strong>🎯 Strategy:</strong> "Explore deeply before exploring broadly"
+                    </div>
+
+                    <h3>How It Works</h3>
+                    <ol style="margin: 15px 0 15px 30px;">
+                        <li>Start with the initial node on the stack</li>
+                        <li>Pop the top node from the stack</li>
+                        <li>If it's the goal, return the solution</li>
+                        <li>Otherwise, push all its children onto the stack</li>
+                        <li>Repeat until goal is found or stack is empty</li>
+                    </ol>
+
+                    <h3>Pseudocode</h3>
+                    <div class="code-block">
+<span class="keyword">function</span> <span class="function">DFS</span>(start, goal):
+    frontier ← <span class="function">Stack</span>()
+    frontier.<span class="function">push</span>(start)
+    explored ← ∅
+    parent[start] ← <span class="keyword">null</span>
+
+    <span class="keyword">while</span> frontier <span class="keyword">is not empty</span>:
+        node ← frontier.<span class="function">pop</span>()
+
+        <span class="keyword">if</span> node <span class="keyword">in</span> explored:
+            <span class="keyword">continue</span>
+
+        <span class="keyword">if</span> node == goal:
+            <span class="keyword">return</span> <span class="function">reconstruct_path</span>(parent, node)
+
+        explored.<span class="function">add</span>(node)
+
+        <span class="comment">// Push in reverse order so leftmost is processed first</span>
+        <span class="keyword">for each</span> child <span class="keyword">in</span> <span class="function">reverse</span>(<span class="function">successors</span>(node)):
+            <span class="keyword">if</span> child <span class="keyword">not in</span> explored:
+                parent[child] ← node
+                frontier.<span class="function">push</span>(child)
+
+    <span class="keyword">return</span> failure
+                    </div>
+
+                    <h3>Step-by-Step Execution</h3>
+                    <div class="step-indicator" id="dfs-step">Step 0: Initialize with node A</div>
+
+                    <div class="step-controls">
+                        <button class="btn" onclick="dfsStep('prev')" id="dfs-prev">⬅️ Previous</button>
+                        <button class="btn" onclick="dfsStep('next')" id="dfs-next">Next ➡️</button>
+                        <button class="btn" onclick="dfsStep('reset')">🔄 Reset</button>
+                    </div>
+
+                    <table id="dfs-table">
+                        <tr>
+                            <th>Step</th>
+                            <th>Stack (Top → Bottom)</th>
+                            <th>Node Expanded</th>
+                            <th>Children Pushed</th>
+                            <th>Explored Set</th>
+                        </tr>
+                        <tr class="dfs-row" data-step="0">
+                            <td>0</td>
+                            <td>[A]</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>{ }</td>
+                        </tr>
+                        <tr class="dfs-row" data-step="1">
+                            <td>1</td>
+                            <td>[B, C]</td>
+                            <td>A</td>
+                            <td>B, C</td>
+                            <td>{A}</td>
+                        </tr>
+                        <tr class="dfs-row" data-step="2">
+                            <td>2</td>
+                            <td>[D, E, C]</td>
+                            <td>B</td>
+                            <td>D, E</td>
+                            <td>{A, B}</td>
+                        </tr>
+                        <tr class="dfs-row" data-step="3">
+                            <td>3</td>
+                            <td>[E, C]</td>
+                            <td>D</td>
+                            <td>-</td>
+                            <td>{A, B, D}</td>
+                        </tr>
+                        <tr class="dfs-row" data-step="4">
+                            <td>4</td>
+                            <td>[G, C]</td>
+                            <td>E</td>
+                            <td>G</td>
+                            <td>{A, B, D, E}</td>
+                        </tr>
+                        <tr class="dfs-row" data-step="5">
+                            <td>5</td>
+                            <td>[C]</td>
+                            <td>G ✅</td>
+                            <td>-</td>
+                            <td>{A, B, D, E, G}</td>
+                        </tr>
+                    </table>
+
+                    <div class="success-box">
+                        <strong>✅ Solution Found:</strong> A → B → E → G (Cost: 3)
+                    </div>
+
+                    <div class="info-box">
+                        <strong>📝 Note:</strong> Node C was never explored! DFS found the goal before needing to explore that branch.
+                    </div>
+
+                    <h3>Search Tree Construction</h3>
+                    <div class="tree-visual">          [A]
+         /
+      [B]
+     /   \
+  [D]     [E]
+           \
+           [G] ← Goal found
+
+(Branch C-F was never explored)</div>
+
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>⏱️ Time Complexity</h4>
+                            <p><strong>O(b<sup>m</sup>)</strong></p>
+                            <p>May explore entire tree to depth m</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>💾 Space Complexity</h4>
+                            <p><strong>O(b·m)</strong></p>
+                            <p>Only stores path + siblings</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>✅ Complete</h4>
+                            <p><strong>No</strong></p>
+                            <p>Can get stuck in infinite branches</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>🎯 Optimal</h4>
+                            <p><strong>No</strong></p>
+                            <p>Returns first solution found</p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Main Drawback:</strong> Not optimal and can get trapped in deep branches. However, it's very memory-efficient!
+                    </div>
+                </div>
+            </div>
+
+            <!-- DLS Tab -->
+            <div id="dls" class="tab-content">
+                <div class="section">
+                    <h2>📏 Depth-Limited Search (DLS)</h2>
+
+                    <h3>Core Concept</h3>
+                    <p>DLS is DFS with a <strong>predetermined depth limit L</strong>. It prevents infinite descent but may miss solutions deeper than L.</p>
+
+                    <div class="info-box">
+                        <strong>🎯 Strategy:</strong> "Explore deeply, but not too deeply"
+                    </div>
+
+                    <h3>How It Works</h3>
+                    <ol style="margin: 15px 0 15px 30px;">
+                        <li>Perform DFS with a depth counter</li>
+                        <li>When depth reaches limit L, stop expanding that branch</li>
+                        <li>Return "cutoff" if limit reached, "failure" if no solution exists</li>
+                        <li>If goal found within limit, return solution</li>
+                    </ol>
+
+                    <h3>Pseudocode</h3>
+                    <div class="code-block">
+<span class="keyword">function</span> <span class="function">DLS</span>(node, goal, limit):
+    <span class="keyword">if</span> node == goal:
+        <span class="keyword">return</span> success
+
+    <span class="keyword">if</span> limit == 0:
+        <span class="keyword">return</span> cutoff
+
+    cutoff_occurred ← <span class="keyword">false</span>
+
+    <span class="keyword">for each</span> child <span class="keyword">in</span> <span class="function">successors</span>(node):
+        result ← <span class="function">DLS</span>(child, goal, limit - 1)
+
+        <span class="keyword">if</span> result == cutoff:
+            cutoff_occurred ← <span class="keyword">true</span>
+        <span class="keyword">else if</span> result == success:
+            <span class="keyword">return</span> success
+
+    <span class="keyword">if</span> cutoff_occurred:
+        <span class="keyword">return</span> cutoff
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> failure
+                    </div>
+
+                    <h3>Example: DLS with Limit = 2</h3>
+                    <div class="warning-box">
+                        <strong>⚠️ Problem:</strong> Our goal G is at depth 3, so with limit L=2, we cannot reach it!
+                    </div>
+
+                    <h3>Nodes Explored (Limit = 2)</h3>
+                    <table>
+                        <tr>
+                            <th>Depth</th>
+                            <th>Nodes at This Depth</th>
+                            <th>Status</th>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>A</td>
+                            <td>✅ Explored</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>B, C</td>
+                            <td>✅ Explored</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>D, E, F</td>
+                            <td>✅ Explored (limit reached)</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>G</td>
+                            <td>❌ Not explored (beyond limit)</td>
+                        </tr>
+                    </table>
+
+                    <div class="tree-visual">          [A]
+         /   \
+      [B]     [C]
+     /   \      \
+  [D]     [E]    [F]
+
+Limit reached! G is beyond depth 2.</div>
+
+                    <h3>Example: DLS with Limit = 3</h3>
+                    <div class="success-box">
+                        <strong>✅ Success:</strong> With limit L=3, we can reach G!
+                    </div>
+
+                    <div class="tree-visual">          [A]
+         /   \
+      [B]     [C]
+     /   \      \
+  [D]     [E]    [F]
+           \
+           [G] ← Found within limit!</div>
+
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>⏱️ Time Complexity</h4>
+                            <p><strong>O(b<sup>L</sup>)</strong></p>
+                            <p>Explores all nodes up to depth L</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>💾 Space Complexity</h4>
+                            <p><strong>O(b·L)</strong></p>
+                            <p>Linear in depth limit</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>✅ Complete</h4>
+                            <p><strong>Only if L ≥ d</strong></p>
+                            <p>Must set limit deep enough</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>🎯 Optimal</h4>
+                            <p><strong>No</strong></p>
+                            <p>Returns first solution found</p>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Insight:</strong> DLS solves DFS's infinite-depth problem but introduces a new problem: choosing the right limit!
+                    </div>
+                </div>
+            </div>
+
+            <!-- IDS Tab -->
+            <div id="ids" class="tab-content">
+                <div class="section">
+                    <h2>🔄 Iterative Deepening Search (IDS)</h2>
+
+                    <h3>Core Concept</h3>
+                    <p>IDS repeatedly runs DLS with <strong>increasing depth limits</strong> (0, 1, 2, 3, ...). It combines the <strong>space efficiency of DFS</strong> with the <strong>optimality of BFS</strong>!</p>
+
+                    <div class="info-box">
+                        <strong>🎯 Strategy:</strong> "Try shallow first, then gradually go deeper"
+                    </div>
+
+                    <h3>How It Works</h3>
+                    <ol style="margin: 15px 0 15px 30px;">
+                        <li>Start with depth limit L = 0</li>
+                        <li>Run DLS with current limit</li>
+                        <li>If solution found, return it</li>
+                        <li>If cutoff occurred, increment L and repeat</li>
+                        <li>If failure (no cutoff), no solution exists</li>
+                    </ol>
+
+                    <h3>Pseudocode</h3>
+                    <div class="code-block">
+<span class="keyword">function</span> <span class="function">IDS</span>(start, goal):
+    <span class="keyword">for</span> depth = 0 <span class="keyword">to</span> ∞:
+        result ← <span class="function">DLS</span>(start, goal, depth)
+
+        <span class="keyword">if</span> result == success:
+            <span class="keyword">return</span> solution
+
+        <span class="keyword">if</span> result == failure:
+            <span class="keyword">return</span> failure
+
+    <span class="keyword">return</span> failure
+                    </div>
+
+                    <h3>Step-by-Step Execution</h3>
+
+                    <h4>Iteration 1: Limit = 0</h4>
+                    <div class="tree-visual">[A]
+
+Result: Cutoff (goal not found)</div>
+
+                    <h4>Iteration 2: Limit = 1</h4>
+                    <div class="tree-visual">      [A]
+     /   \
+  [B]     [C]
+
+Result: Cutoff (goal not found)</div>
+
+                    <h4>Iteration 3: Limit = 2</h4>
+                    <div class="tree-visual">          [A]
+         /   \
+      [B]     [C]
+     /   \      \
+  [D]     [E]    [F]
+
+Result: Cutoff (goal not found)</div>
+
+                    <h4>Iteration 4: Limit = 3</h4>
+                    <div class="tree-visual">          [A]
+         /   \
+      [B]     [C]
+     /   \      \
+  [D]     [E]    [F]
+           \
+           [G] ← Goal found!
+
+Result: Success!</div>
+
+                    <div class="success-box">
+                        <strong>✅ Solution Found:</strong> A → B → E → G (Cost: 3)
+                    </div>
+
+                    <h3>Why Re-expansion Isn't Too Costly</h3>
+                    <p>You might think: "We're re-expanding nodes multiple times! Isn't that wasteful?"</p>
+
+                    <div class="info-box">
+                        <strong>💡 Surprising Fact:</strong> Most nodes are at the deepest level! Re-expanding upper levels adds only a small overhead.
+                        <br><br>
+                        <strong>Mathematical proof:</strong> For b=2, d=3:<br>
+                        • Nodes at depth 3: 8<br>
+                        • Nodes at depth 2: 4<br>
+                        • Nodes at depth 1: 2<br>
+                        • Nodes at depth 0: 1<br>
+                        <br>
+                        Total re-expansions ≈ (b/(b-1)) × nodes at depth d ≈ 2 × 8 = 16<br>
+                        This is only 2× the work of BFS, but uses O(bd) space instead of O(b<sup>d</sup>)!
+                    </div>
+
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>⏱️ Time Complexity</h4>
+                            <p><strong>O(b<sup>d</sup>)</strong></p>
+                            <p>Same as BFS (with small constant factor)</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>💾 Space Complexity</h4>
+                            <p><strong>O(b·d)</strong></p>
+                            <p>Linear! Much better than BFS</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>✅ Complete</h4>
+                            <p><strong>Yes</strong></p>
+                            <p>Will eventually try all depths</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>🎯 Optimal</h4>
+                            <p><strong>Yes</strong></p>
+                            <p>For uniform step costs</p>
+                        </div>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>🏆 Best Uninformed Strategy:</strong> IDS is often the preferred uninformed search when the search space is large and the solution depth is unknown!
+                    </div>
+                </div>
+            </div>
+
+            <!-- UCS Tab -->
+            <div id="ucs" class="tab-content">
+                <div class="section">
+                    <h2>💰 Uniform-Cost Search (UCS)</h2>
+
+                    <h3>Core Concept</h3>
+                    <p>UCS expands the node with the <strong>lowest path cost g(n)</strong> from the start. It uses a <strong>priority queue</strong> ordered by cumulative path cost.</p>
+
+                    <div class="info-box">
+                        <strong>🎯 Strategy:</strong> "Always expand the cheapest path first"
+                    </div>
+
+                    <h3>How It Works</h3>
+                    <ol style="margin: 15px 0 15px 30px;">
+                        <li>Start with initial node in priority queue (cost = 0)</li>
+                        <li>Remove node with lowest path cost</li>
+                        <li>If it's the goal, return the solution</li>
+                        <li>Otherwise, add children with updated path costs</li>
+                        <li>Repeat until goal is found</li>
+                    </ol>
+
+                    <h3>Pseudocode</h3>
+                    <div class="code-block">
+<span class="keyword">function</span> <span class="function">UCS</span>(start, goal):
+    frontier ← <span class="function">PriorityQueue</span>()
+    frontier.<span class="function">insert</span>(start, priority=0)
+    explored ← ∅
+    best_g[start] ← 0
+    parent[start] ← <span class="keyword">null</span>
+
+    <span class="keyword">while</span> frontier <span class="keyword">is not empty</span>:
+        node ← frontier.<span class="function">remove_min</span>()
+
+        <span class="keyword">if</span> node == goal:
+            <span class="keyword">return</span> <span class="function">reconstruct_path</span>(parent, node)
+
+        explored.<span class="function">add</span>(node)
+
+        <span class="keyword">for each</span> child <span class="keyword">in</span> <span class="function">successors</span>(node):
+            new_cost ← best_g[node] + <span class="function">cost</span>(node, child)
+
+            <span class="keyword">if</span> child <span class="keyword">not in</span> explored:
+                <span class="keyword">if</span> child <span class="keyword">not in</span> frontier <span class="keyword">or</span> new_cost < best_g[child]:
+                    best_g[child] ← new_cost
+                    parent[child] ← node
+                    frontier.<span class="function">insert_or_update</span>(child, priority=new_cost)
+
+    <span class="keyword">return</span> failure
+                    </div>
+
+                    <h3>Step-by-Step Execution (Unit Costs)</h3>
+                    <div class="info-box">
+                        <strong>📝 Note:</strong> Since all edges in our example have cost = 1, UCS behaves identically to BFS!
+                    </div>
+
+                    <table>
+                        <tr>
+                            <th>Step</th>
+                            <th>Priority Queue (node:cost)</th>
+                            <th>Expanded</th>
+                            <th>Path Cost</th>
+                        </tr>
+                        <tr>
+                            <td>0</td>
+                            <td>{A:0}</td>
+                            <td>-</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>{B:1, C:1}</td>
+                            <td>A</td>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>{C:1, D:2, E:2}</td>
+                            <td>B</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>{D:2, E:2, F:2}</td>
+                            <td>C</td>
+                            <td>1</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>{E:2, F:2}</td>
+                            <td>D</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>{F:2, G:3}</td>
+                            <td>E</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>{G:3}</td>
+                            <td>F</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>7</td>
+                            <td>{ }</td>
+                            <td>G ✅</td>
+                            <td>3</td>
+                        </tr>
+                    </table>
+
+                    <div class="success-box">
+                        <strong>✅ Optimal Solution:</strong> A → B → E → G (Total Cost: 3)
+                    </div>
+
+                    <h3>Search Tree with Costs</h3>
+                    <div class="tree-visual">          [A:0]
+         /      \
+     [B:1]      [C:1]
+     /   \         \
+ [D:2]  [E:2]     [F:2]
+           \
+          [G:3] ← Optimal path (lowest cost)</div>
+
+                    <h3>Example with Non-Uniform Costs</h3>
+                    <p>Let's see where UCS really shines! Consider this modified graph:</p>
+
+                    <div class="graph-container">
+                        <div class="graph-visual">        A
+      / \
+    1/   \5
+    /     \
+   B       C
+   |       |
+  1|      1|
+   |       |
+   G       G</div>
+                    </div>
+
+                    <div class="info-box">
+                        <strong>💡 Key Insight:</strong> BFS would find path A→C→G (2 steps), but UCS finds A→B→G (cost 2) instead of A→C→G (cost 6). UCS is optimal even when the shortest path has more steps!
+                    </div>
+
+                    <h3>Complexity Analysis</h3>
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>⏱️ Time Complexity</h4>
+                            <p><strong>O(b<sup>C*/ε</sup>)</strong></p>
+                            <p>C* = optimal cost, ε = min edge cost</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>💾 Space Complexity</h4>
+                            <p><strong>O(b<sup>C*/ε</sup>)</strong></p>
+                            <p>Must store all frontier nodes</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>✅ Complete</h4>
+                            <p><strong>Yes</strong></p>
+                            <p>If all costs are positive</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>🎯 Optimal</h4>
+                            <p><strong>Yes</strong></p>
+                            <p>Always finds lowest-cost solution</p>
+                        </div>
+                    </div>
+
+                    <div class="success-box">
+                        <strong>🏆 When to Use UCS:</strong> Essential when edge costs vary! It's the foundation for A* search (informed search).
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Tab -->
+            <div id="comparison" class="tab-content">
+                <div class="section">
+                    <h2>📊 Comparative Analysis</h2>
+
+                    <h3>Complete Comparison Table</h3>
+                    <table>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Complete?</th>
+                            <th>Optimal?</th>
+                            <th>Time</th>
+                            <th>Space</th>
+                            <th>Best Use Case</th>
+                        </tr>
+                        <tr>
+                            <td><strong>BFS</strong></td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes*</td>
+                            <td>O(b<sup>d</sup>)</td>
+                            <td>O(b<sup>d</sup>)</td>
+                            <td>Shallow solutions, uniform costs</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DFS</strong></td>
+                            <td>❌ No</td>
+                            <td>❌ No</td>
+                            <td>O(b<sup>m</sup>)</td>
+                            <td>O(b·m)</td>
+                            <td>Memory-constrained, deep trees</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DLS</strong></td>
+                            <td>⚠️ If L≥d</td>
+                            <td>❌ No</td>
+                            <td>O(b<sup>L</sup>)</td>
+                            <td>O(b·L)</td>
+                            <td>Known depth bound</td>
+                        </tr>
+                        <tr>
+                            <td><strong>IDS</strong></td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes*</td>
+                            <td>O(b<sup>d</sup>)</td>
+                            <td>O(b·d)</td>
+                            <td>Unknown depth, large spaces</td>
+                        </tr>
+                        <tr>
+                            <td><strong>UCS</strong></td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes</td>
+                            <td>O(b<sup>C*/ε</sup>)</td>
+                            <td>O(b<sup>C*/ε</sup>)</td>
+                            <td>Non-uniform costs</td>
+                        </tr>
+                    </table>
+
+                    <p class="small" style="margin-top: 10px;">* Optimal for uniform step costs</p>
+
+                    <h3>Visual Comparison: Search Patterns</h3>
+
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>🌊 BFS Pattern</h4>
+                            <div class="tree-visual" style="font-size: 0.8em;">Level 0: A
+Level 1: B C
+Level 2: D E F
+Level 3: G
+
+Explores layer by layer</div>
+                        </div>
+
+                        <div class="complexity-card">
+                            <h4>🏔️ DFS Pattern</h4>
+                            <div class="tree-visual" style="font-size: 0.8em;">A → B → D (dead end)
+    ↓
+    E → G (found!)
+
+Goes deep first</div>
+                        </div>
+
+                        <div class="complexity-card">
+                            <h4>🔄 IDS Pattern</h4>
+                            <div class="tree-visual" style="font-size: 0.8em;">Try 0: A
+Try 1: A B C
+Try 2: A B C D E F
+Try 3: ...G found!
+
+Gradually deepens</div>
+                        </div>
+
+                        <div class="complexity-card">
+                            <h4>💰 UCS Pattern</h4>
+                            <div class="tree-visual" style="font-size: 0.8em;">Cost 0: A
+Cost 1: B C
+Cost 2: D E F
+Cost 3: G
+
+Expands by cost</div>
+                        </div>
+                    </div>
+
+                    <h3>Memory Usage Comparison</h3>
+                    <p>For a tree with branching factor b=3 and solution depth d=5:</p>
+
+                    <table>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Nodes Stored</th>
+                            <th>Approximate Memory</th>
+                        </tr>
+                        <tr>
+                            <td>BFS</td>
+                            <td>3<sup>5</sup> = 243</td>
+                            <td>🔴 Very High</td>
+                        </tr>
+                        <tr>
+                            <td>DFS</td>
+                            <td>3 × 5 = 15</td>
+                            <td>🟢 Very Low</td>
+                        </tr>
+                        <tr>
+                            <td>IDS</td>
+                            <td>3 × 5 = 15</td>
+                            <td>🟢 Very Low</td>
+                        </tr>
+                        <tr>
+                            <td>UCS</td>
+                            <td>≈ 243</td>
+                            <td>🔴 Very High</td>
+                        </tr>
+                    </table>
+
+                    <h3>Decision Guide: Which Algorithm to Use?</h3>
+
+                    <div class="info-box">
+                        <h4>Use <strong>BFS</strong> when:</h4>
+                        <ul style="margin: 10px 0 10px 30px;">
+                            <li>Solution is likely shallow</li>
+                            <li>All step costs are equal</li>
+                            <li>You have enough memory</li>
+                            <li>You need the optimal solution</li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Use <strong>DFS</strong> when:</h4>
+                        <ul style="margin: 10px 0 10px 30px;">
+                            <li>Memory is severely limited</li>
+                            <li>Solutions are deep in the tree</li>
+                            <li>You don't need the optimal solution</li>
+                            <li>The tree has a known maximum depth</li>
+                        </ul>
+                    </div>
+
+                    <div class="success-box">
+                        <h4>Use <strong>IDS</strong> when:</h4>
+                        <ul style="margin: 10px 0 10px 30px;">
+                            <li>You don't know the solution depth</li>
+                            <li>Memory is limited</li>
+                            <li>You need the optimal solution (uniform costs)</li>
+                            <li><strong>This is often the best default choice!</strong></li>
+                        </ul>
+                    </div>
+
+                    <div class="info-box">
+                        <h4>Use <strong>UCS</strong> when:</h4>
+                        <ul style="margin: 10px 0 10px 30px;">
+                            <li>Edge costs vary</li>
+                            <li>You need the lowest-cost solution</li>
+                            <li>You have enough memory</li>
+                            <li>Preparing to use A* (informed search)</li>
+                        </ul>
+                    </div>
+
+                    <h3>Key Takeaways</h3>
+
+                    <div class="complexity-grid">
+                        <div class="complexity-card">
+                            <h4>🎯 Optimality</h4>
+                            <p>BFS, IDS, and UCS guarantee optimal solutions (with appropriate cost functions)</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>💾 Memory</h4>
+                            <p>DFS and IDS are memory-efficient; BFS and UCS can be memory-intensive</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>⏱️ Time</h4>
+                            <p>All uninformed algorithms have exponential time complexity in the worst case</p>
+                        </div>
+                        <div class="complexity-card">
+                            <h4>🏆 Winner</h4>
+                            <p>IDS combines the best of both worlds: optimal + memory-efficient</p>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Important Limitation:</strong> All uninformed search algorithms have exponential complexity. For large search spaces, <strong>informed search</strong> (like A*) using heuristics is necessary!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Interactive Guide to Uninformed Search Algorithms</p>
+            <p style="font-size: 0.9em; opacity: 0.8;">Symbolic AI • Classical Search • Academic Reference</p>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+
+        // BFS Step-by-step
+        let bfsCurrentStep = 0;
+        const bfsMaxSteps = 7;
+
+        function bfsStep(action) {
+            if (action === 'next' && bfsCurrentStep < bfsMaxSteps) {
+                bfsCurrentStep++;
+            } else if (action === 'prev' && bfsCurrentStep > 0) {
+                bfsCurrentStep--;
+            } else if (action === 'reset') {
+                bfsCurrentStep = 0;
+            }
+
+            updateBFSDisplay();
+        }
+
+        function updateBFSDisplay() {
+            // Update step indicator
+            const stepTexts = [
+                "Step 0: Initialize with node A in the queue",
+                "Step 1: Dequeue A, enqueue its children B and C",
+                "Step 2: Dequeue B, enqueue its children D and E",
+                "Step 3: Dequeue C, enqueue its child F",
+                "Step 4: Dequeue D (no children)",
+                "Step 5: Dequeue E, enqueue its child G",
+                "Step 6: Dequeue F (no children)",
+                "Step 7: Dequeue G - Goal found! ✅"
+            ];
+            document.getElementById('bfs-step').textContent = stepTexts[bfsCurrentStep];
+
+            // Highlight current row
+            const rows = document.querySelectorAll('.bfs-row');
+            rows.forEach((row, index) => {
+                if (index === bfsCurrentStep) {
+                    row.style.background = '#e3f2fd';
+                    row.style.fontWeight = 'bold';
+                } else if (index < bfsCurrentStep) {
+                    row.style.background = '#f5f5f5';
+                    row.style.fontWeight = 'normal';
+                } else {
+                    row.style.background = 'white';
+                    row.style.fontWeight = 'normal';
+                }
+            });
+
+            // Update button states
+            document.getElementById('bfs-prev').disabled = bfsCurrentStep === 0;
+            document.getElementById('bfs-next').disabled = bfsCurrentStep === bfsMaxSteps;
+        }
+
+        // DFS Step-by-step
+        let dfsCurrentStep = 0;
+        const dfsMaxSteps = 5;
+
+        function dfsStep(action) {
+            if (action === 'next' && dfsCurrentStep < dfsMaxSteps) {
+                dfsCurrentStep++;
+            } else if (action === 'prev' && dfsCurrentStep > 0) {
+                dfsCurrentStep--;
+            } else if (action === 'reset') {
+                dfsCurrentStep = 0;
+            }
+
+            updateDFSDisplay();
+        }
+
+        function updateDFSDisplay() {
+            const stepTexts = [
+                "Step 0: Initialize with node A on the stack",
+                "Step 1: Pop A, push its children C and B (B on top)",
+                "Step 2: Pop B, push its children E and D (D on top)",
+                "Step 3: Pop D (no children, dead end)",
+                "Step 4: Pop E, push its child G",
+                "Step 5: Pop G - Goal found! ✅"
+            ];
+            document.getElementById('dfs-step').textContent = stepTexts[dfsCurrentStep];
+
+            const rows = document.querySelectorAll('.dfs-row');
+            rows.forEach((row, index) => {
+                if (index === dfsCurrentStep) {
+                    row.style.background = '#e3f2fd';
+                    row.style.fontWeight = 'bold';
+                } else if (index < dfsCurrentStep) {
+                    row.style.background = '#f5f5f5';
+                    row.style.fontWeight = 'normal';
+                } else {
+                    row.style.background = 'white';
+                    row.style.fontWeight = 'normal';
+                }
+            });
+
+            document.getElementById('dfs-prev').disabled = dfsCurrentStep === 0;
+            document.getElementById('dfs-next').disabled = dfsCurrentStep === dfsMaxSteps;
+        }
+
+        // Initialize displays
+        updateBFSDisplay();
+        updateDFSDisplay();
+    </script>
+</body>
+</html>
